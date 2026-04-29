@@ -61,7 +61,7 @@ SCSI disk topology. Restoring a UEFI-installed Windows onto a Gen 1
 (BIOS) VM fails at boot.
 
 ![Recovery Wizard](./img/recovery-wizard.jpg)
-*Figure 1: Initializing the Windows Recovery Environment (WinRE) restore wizard.*
+*Figure 1: Initializing the Windows Recovery Environment (WinRE) wizard.*
 
 After creation, **don't start the VM yet** — hardware needs more changes.
 
@@ -78,6 +78,8 @@ Right-click VM → **Settings**:
 - **Integration Services:** ✅ check **Guest services**
 
 
+![Select Image](./img/select-image.jpg)
+*Figure 2: Identifying the 2026-04-26 backup on the passthrough disk.*
 
 Guest Services is off by default. Turn it on now — useful if extra  
 drivers or files need to be pushed in later without networking.
@@ -101,7 +103,7 @@ must be in an offline state in Disk Management.
    **Offline**.
 
 ![Excluding Disks](./img/disk-exclusion.png)
-*Figure 3: Ensuring the source disk is excluded from formatting.*
+*Figure 3: Ensuring the WD MyPassport is excluded from the restoration target.*
 
 The disk now shows as **Offline** with a red down-arrow icon.
 
@@ -129,8 +131,8 @@ The VM now has two virtual storage devices:
 | Hard Drive 2 | Physical disk (WD MyPassport) | Read-only source — holds `WindowsImageBackup\` |
 | DVD Drive | Server 2022 eval ISO | Boot media for recovery environment |
 
-![Restore Success](./img/restore-success.png)
-*Figure 4: Successful completion of the Bare Metal Recovery process.*
+![Restore Progress](./img/restore-progress.png)
+*Figure 4: Active restoration of the system volumes.*
 
 If "Physical hard disk" shows as greyed out or no disks appear, the
 WD MyPassport is not offline yet. Go back to Step 3.
@@ -149,6 +151,9 @@ Before powering on:
 - DVD drive has the Windows Server 2022 ISO loaded
 - BIOS/Firmware boot order in VM Settings → **Firmware:**
   put `DVD Drive` above `Hard Drive` so the VM boots from ISO
+
+  ![Restore Success](./img/restore-success.jpg)
+*Figure 5: Successful Bare Metal Recovery verification.*
 
 Take a Hyper-V checkpoint of the VM here before pressing Start.
 If the restore goes sideways, rolling back is one click.
