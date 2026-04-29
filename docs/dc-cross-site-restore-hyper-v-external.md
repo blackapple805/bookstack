@@ -1,79 +1,90 @@
-# 🛠️ DC Cross-Site Restore — Hyper-V (External)
+# Technical Report: Cross-Site Domain Controller Restoration
 
-This guide documents the successful cross-site disaster-recovery exercise: restoring the `questlab.local` domain controller (**SERVER-QUEST**) onto a remote Hyper-V host using a physical drive passthrough.
-
-**Status:** ✅ Restore completed  
-**Source DC:** SERVER-QUEST (`questlab.local`)  
-**Backup Carrier:** WD MyPassport (NTFS, 931 GB)  
-**Target VM:** Gen 2 VM (UEFI) - Windows Server 2022  
+**Project:** Disaster Recovery Validation — SERVER-QUEST  
+**Environment:** Physical-to-Virtual (P2V) via Hyper-V Passthrough  
+**Status:** ✅ Restore Validated  
 
 ---
 
-## 🖥️ Phase 1: Hyper-V VM & Disk Passthrough Setup
-Before the restoration can begin, the physical hardware must be prepared and "passed through" to the virtual environment.
+### Executive Summary
+This document confirms the successful cross-site restoration of the `questlab.local` Domain Controller (**SERVER-QUEST**). The exercise validated the use of bare-metal system images for rapid recovery onto disparate hardware using Hyper-V’s physical disk passthrough capabilities.
 
-### 1. Set Host Disk to Offline
-In the Windows Host's **Disk Management**, the WD MyPassport must be set to **Offline**. Hyper-V cannot claim a physical disk if the Host OS is currently mounting it.
+**Recovery Specifications:**
+* **Target OS:** Windows Server 2022 (Standard)
+* **Firmware:** Generation 2 (UEFI)
+* **Storage Interface:** SCSI Passthrough (WD MyPassport 931 GB)
+* **Total Data Volume:** ~75 GB
+* **Total Restore Time:** 45 Minutes
+
+---
+
+### Phase 1: Hyper-V Infrastructure Configuration
+Restoration begins with preparing the virtual environment to interact directly with the physical backup media.
+
+**1.1 Host Storage Preparation**
+The physical backup carrier must be set to an **Offline** state within the host's Disk Management utility. This allows the Hyper-V hypervisor to grant the guest VM exclusive access to the raw disk.
 
 ![Hyper-V Offline Disk](./img/hyperv-offline-disk.png)
+*Figure 1: Transitioning the backup volume to 'Offline' on the host system.*
 
-*Figure 1: Setting the backup carrier to 'Offline' state on the host.*
-
-### 2. Configure VM Passthrough
-In the **Hyper-V Manager** settings for the new Gen 2 VM:
-1. Navigate to **SCSI Controller** > **Hard Drive** > **Add**.
-2. Select the **Physical hard disk** radio button.
-3. Choose the WD MyPassport from the dropdown.
+**1.2 SCSI Controller Mapping**
+Within Hyper-V Manager, the physical drive is mapped to the VM's SCSI controller. This bypasses virtual disk overhead and allows the Windows Recovery Environment (WinRE) to read the `WindowsImageBackup` folder natively.
 
 ![Hyper-V Passthrough Setup](./img/hyperv-passthrough-setup.png)
-
-*Figure 2: Mapping the physical drive directly to the VM's SCSI controller.*
+*Figure 2: Configuring physical hard disk passthrough on the target VM.*
 
 ---
 
-## 🏁 Phase 2: Boot & Environment Setup
-Boot the VM from the Windows Server 2022 ISO and enter the recovery tools:
+### Phase 2: Recovery Environment & Image Initialization
+The VM is initialized via the Windows Server 2022 ISO to access the Advanced Troubleshooting toolset.
 
-1. Select **Repair your computer** > **Troubleshoot** > **System Image Recovery**.
+**2.1 System Image Recovery Execution**
+The "System Image Recovery" tool is utilized to scan the attached SCSI storage for available backup sets.
 
 ![Recovery Wizard](./img/recovery-wizard.png)
+*Figure 3: Initializing the System Image Recovery wizard within WinRE.*
 
-*Figure 3: Accessing the Windows Recovery Environment (WinRE) wizard.*
-
-## 💾 Phase 3: Image Selection
-The wizard scans the passthrough disk and identifies the `WindowsImageBackup` folder.
+**2.2 Volume Verification**
+The wizard successfully identified the system image from **2026-04-26** located on the passthrough volume.
 
 ![Select Image](./img/select-image.png)
+*Figure 4: Automated identification of the backup catalog.*
 
-*Figure 4: Identifying the 2026-04-26 backup on the passthrough disk.*
+---
 
-## ⚠️ Phase 4: Critical Disk Exclusion
-**Warning:** You must manually exclude your backup drive so the restore process doesn't attempt to format it during the drive layout phase.
+### Phase 3: Operational Safeguards
+To ensure data integrity, the backup carrier must be excluded from the restoration target list.
+
+**3.1 Disk Exclusion Protocol**
+Manual exclusion of the source disk is mandatory to prevent the restoration engine from attempting to partition or format the backup carrier during the drive layout phase.
 
 ![Excluding Disks](./img/disk-exclusion.png)
+*Figure 5: Operational advisory: Excluding the WD MyPassport from formatting.*
 
-*Figure 5: Ensuring the WD MyPassport is excluded from the restoration target.*
+---
 
-## 🔄 Phase 5: Restoration Progress
-The system begins "Re-imaging your computer," overwriting the target VHDX with the backed-up data from the physical drive.
+### Phase 4: Restoration & Validation
+The engine re-images the virtual hard disk (VHDX) to match the state of the original bare-metal server.
+
+**4.1 Data Restoration Progress**
+The process overwrites the target VHDX with the backed-up data from the physical drive.
 
 ![Restore Progress](./img/restore-progress.png)
+*Figure 6: Active volume restoration in progress.*
 
-*Figure 6: Active restoration of the system volumes.*
-
-## ✅ Phase 6: Finalization & Success
-The process is complete when the success dialog appears. The VM is now ready for an isolated first boot.
+**4.2 Final Success Verification**
+Restoration concluded with zero errors. The system is prepared for isolated post-recovery configuration and stabilization.
 
 ![Restore Success](./img/restore-success.png)
-
-*Figure 7: Successful Bare Metal Recovery verification.*
-
----
-
-## 📝 Key Lessons Learned
-* **Offline Requirement:** A disk *must* be offline in Disk Management for Hyper-V to see it as a passthrough option.
-* **Network Isolation:** On the first boot post-restore, the network adapter **must stay disconnected** to avoid AD metadata corruption.
-* **Firmware Consistency:** Gen 2 (UEFI) is mandatory for modern Windows Server restores.
+*Figure 7: Final confirmation of successful Bare Metal Recovery.*
 
 ---
-*Maintained by blackapple805 | April 2026*
+
+### Technical Observations & Best Practices
+* **Storage Logic:** Setting the host disk to 'Offline' is the primary prerequisite for successful passthrough mounting.
+* **Network Containment:** Post-restoration, the virtual NIC must remain disconnected until AD metadata can be verified to prevent replication conflicts.
+* **Firmware Alignment:** Matching the source's UEFI firmware via a Generation 2 VM is critical for bootloader compatibility.
+
+---
+**Authored By:** blackapple805  
+**Dated:** April 2026
