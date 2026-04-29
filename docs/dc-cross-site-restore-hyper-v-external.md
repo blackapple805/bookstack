@@ -60,6 +60,9 @@ Generation 2 matters: matches the source DC's UEFI boot mode and
 SCSI disk topology. Restoring a UEFI-installed Windows onto a Gen 1
 (BIOS) VM fails at boot.
 
+![Recovery Wizard](./img/recovery-wizard.jpg)
+*Figure 1: Initializing the Windows Recovery Environment (WinRE) restore wizard.*
+
 After creation, **don't start the VM yet** — hardware needs more changes.
 
 ---
@@ -74,7 +77,7 @@ Right-click VM → **Settings**:
 - **Processor:** 2 virtual processors (more is fine, 2 minimum)
 - **Integration Services:** ✅ check **Guest services**
 
-![Hyper-V VM Settings – Integration Services](/mnt/data/recovery-wizard.jpg)
+
 
 Guest Services is off by default. Turn it on now — useful if extra  
 drivers or files need to be pushed in later without networking.
@@ -96,8 +99,9 @@ must be in an offline state in Disk Management.
    identifiable by the 931 GB size).
 5. **Right-click the disk label on the left** (not the partition) →
    **Offline**.
-   
-![Disk Management – Set Disk Offline](/mnt/data/restore-success.png)
+
+![Excluding Disks](./img/disk-exclusion.png)
+*Figure 3: Ensuring the source disk is excluded from formatting.*
 
 The disk now shows as **Offline** with a red down-arrow icon.
 
@@ -124,6 +128,9 @@ The VM now has two virtual storage devices:
 | Hard Drive 1 | 150 GB VHDX (`DC-Restore-Test.vhdx`) | Empty — restore target |
 | Hard Drive 2 | Physical disk (WD MyPassport) | Read-only source — holds `WindowsImageBackup\` |
 | DVD Drive | Server 2022 eval ISO | Boot media for recovery environment |
+
+![Restore Success](./img/restore-success.png)
+*Figure 4: Successful completion of the Bare Metal Recovery process.*
 
 If "Physical hard disk" shows as greyed out or no disks appear, the
 WD MyPassport is not offline yet. Go back to Step 3.
