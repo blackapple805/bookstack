@@ -34,13 +34,13 @@ Boot the VM from the Windows Server 2022 ISO and enter the recovery tools:
 
 1. Select **Repair your computer** > **Troubleshoot** > **System Image Recovery**.
 
-![Recovery Wizard](./img/recovery-wizard.jpg)
+![Recovery Wizard](./img/recovery-wizard.png)
 *Figure 3: Accessing the Windows Recovery Environment (WinRE) wizard.*
 
 ## 💾 Phase 3: Image Selection
 The wizard scans the passthrough disk and identifies the `WindowsImageBackup` folder.
 
-![Select Image](./img/select-image.jpg)
+![Select Image](./img/select-image.png)
 *Figure 4: Identifying the 2026-04-26 backup on the passthrough disk.*
 
 ## ⚠️ Phase 4: Critical Disk Exclusion
@@ -58,7 +58,7 @@ The system begins "Re-imaging your computer," overwriting the target VHDX with t
 ## ✅ Phase 6: Finalization & Success
 The process is complete when the success dialog appears. The VM is now ready for an isolated first boot.
 
-![Restore Success](./img/restore-success.jpg)
+![Restore Success](./img/restore-success.png)
 *Figure 7: Successful Bare Metal Recovery verification.*
 
 ---
