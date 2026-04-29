@@ -6,29 +6,29 @@ Cross-site disaster-recovery exercise: restoring the questlab.local domain contr
 
 # Prep & Hyper-V VM Setup at Remote Site
 
-**Status:** ✅ Restore completed
-**Source DC:** SERVER-QUEST (`questlab.local`)
-**Backup carrier:** WD MyPassport (NTFS, 931 GB) — same drive used
-for the original `wbadmin` system image
-**Target host:** Friend's Windows Server with Hyper-V role installed
-**Target VM:** New Gen 2 VM running Windows Server 2022 Standard
+**Status:** ✅ Restore completed  
+**Source DC:** SERVER-QUEST (`questlab.local`)  
+**Backup carrier:** WD MyPassport (NTFS, 931 GB) — same drive used  
+for the original `wbadmin` system image  
+**Target host:** Friend's Windows Server with Hyper-V role installed  
+**Target VM:** New Gen 2 VM running Windows Server 2022 Standard  
 **Date:** 2026-04-26 (continuation of the home-site rebuild work)
 
 ---
 
 ## Overview
 
-Real-world cross-site DR exercise. Walked the original DC's full
-system image (`wbadmin start backup` output, the `WindowsImageBackup`
-folder structure) over to a friend's Hyper-V host on a USB drive,
-attached the drive as a physical disk passthrough to a new
-empty Hyper-V VM, then booted that VM from a Windows Server 2022
-install ISO and used **Repair your computer → Troubleshoot →
-System Image Recovery** to restore SERVER-QUEST onto fresh virtual
+Real-world cross-site DR exercise. Walked the original DC's full  
+system image (`wbadmin start backup` output, the `WindowsImageBackup`  
+folder structure) over to a friend's Hyper-V host on a USB drive,  
+attached the drive as a physical disk passthrough to a new  
+empty Hyper-V VM, then booted that VM from a Windows Server 2022  
+install ISO and used **Repair your computer → Troubleshoot →  
+System Image Recovery** to restore SERVER-QUEST onto fresh virtual  
 hardware.
 
-This validates the recovery path for the home-site Proxmox migration:
-if the same backup can be restored on someone else's hypervisor,
+This validates the recovery path for the home-site Proxmox migration:  
+if the same backup can be restored on someone else's hypervisor,  
 restoring it back onto the home Proxmox host is a much smaller risk.
 
 ---
@@ -40,9 +40,6 @@ restoring it back onto the home Proxmox host is a much smaller risk.
 | WD MyPassport (NTFS) | `WindowsImageBackup\SERVER-QUEST\` (full image), `DC-Backup\Exports\` (config exports), `Proxmox\virtio-win.iso` |
 | USB stick (FAT32) | Windows Server 2022 Standard eval ISO from Microsoft Evaluation Center |
 | Phone | `ipconfig /all` screenshot, OU CSV, GPO list — read-only reference |
-
-The cloud copy of `Exports-CRITICAL.zip` was a backup of the backup —
-not used in the restore but available if the MyPassport had failed.
 
 ---
 
@@ -76,9 +73,10 @@ Right-click VM → **Settings**:
   - **Template:** `Microsoft Windows`
 - **Processor:** 2 virtual processors (more is fine, 2 minimum)
 - **Integration Services:** ✅ check **Guest services**
-  (enables host ↔ VM file copy via `Copy-VMFile` if needed mid-restore)
 
-Guest Services is off by default. Turn it on now — useful if extra
+![Hyper-V VM Settings – Integration Services](/mnt/data/recovery-wizard.jpg)
+
+Guest Services is off by default. Turn it on now — useful if extra  
 drivers or files need to be pushed in later without networking.
 
 ---
@@ -98,6 +96,8 @@ must be in an offline state in Disk Management.
    identifiable by the 931 GB size).
 5. **Right-click the disk label on the left** (not the partition) →
    **Offline**.
+   
+![Disk Management – Set Disk Offline](/mnt/data/restore-success.png)
 
 The disk now shows as **Offline** with a red down-arrow icon.
 
