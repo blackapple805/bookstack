@@ -1,0 +1,303 @@
+/* ============================================================
+   md-style.css — v3 — Tighter spacing, same look
+   For: Pandoc + WeasyPrint, US Letter
+   Install fonts first:
+     sudo apt install -y fonts-inter fonts-jetbrains-mono fonts-ibm-plex
+   ============================================================ */
+
+@page {
+  size: Letter;
+  margin: 0.7in 0.75in 0.85in 0.75in;
+
+  @bottom-right {
+    content: counter(page) " / " counter(pages);
+    font-family: "Inter", "Ubuntu", sans-serif;
+    font-size: 8.5pt;
+    color: #9ca3af;
+    letter-spacing: 0.04em;
+  }
+  @bottom-left {
+    content: string(doc-title);
+    font-family: "Inter", "Ubuntu", sans-serif;
+    font-size: 8.5pt;
+    color: #9ca3af;
+    letter-spacing: 0.02em;
+  }
+}
+
+:root {
+  --ink:           #111418;
+  --ink-soft:      #2c3138;
+  --muted:         #5b6470;
+  --rule:          #e6e8eb;
+  --rule-soft:     #f1f3f5;
+  --accent:        #2563eb;
+  --accent-deep:   #1d4ed8;
+  --accent-soft:   #eff5ff;
+  --code-bg:       #0d1117;
+  --code-ink:      #d6deeb;
+  --code-comment:  #7a869a;
+  --inline-bg:     #f4f5f7;
+  --inline-ink:    #c0392b;
+  --inline-border: #e8eaed;
+}
+
+/* ---------- Base typography ---------- */
+html, body {
+  font-family: "Inter", "IBM Plex Sans", "Ubuntu", "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  background: white;
+  margin: 0;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  text-rendering: optimizeLegibility;
+}
+
+p {
+  margin: 0 0 0.65em;
+  orphans: 3;
+  widows: 3;
+}
+
+strong { color: var(--ink); font-weight: 600; }
+em     { font-style: italic; }
+
+ul, ol {
+  margin: 0.3em 0 0.65em;
+  padding-left: 1.4em;
+}
+li { margin: 0.1em 0; }
+li > p { margin: 0.15em 0; }
+
+/* ---------- Headings ---------- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Inter", "IBM Plex Sans", "Ubuntu", system-ui, sans-serif;
+  color: var(--ink);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  page-break-after: avoid;
+  break-after: avoid;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 22pt;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  margin: 0 0 0.15em;
+  padding-bottom: 0.3em;
+  border-bottom: 3px solid var(--accent);
+  string-set: doc-title content();
+  page-break-before: always;
+  break-before: page;
+}
+h1:first-of-type {
+  page-break-before: avoid;
+  break-before: auto;
+  margin-top: 0;
+}
+
+h2 {
+  font-size: 15pt;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 1.3em 0 0.4em;
+  padding-bottom: 0.22em;
+  border-bottom: 1px solid var(--rule);
+}
+
+h3 {
+  font-size: 12pt;
+  font-weight: 700;
+  margin: 1.1em 0 0.3em;
+  color: var(--ink);
+}
+
+h4 {
+  font-size: 10pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent-deep);
+  margin: 1em 0 0.25em;
+}
+
+h5, h6 {
+  font-size: 10pt;
+  font-weight: 700;
+  color: var(--muted);
+  margin: 0.9em 0 0.25em;
+}
+
+/* First content element after a heading hugs the heading */
+h1 + p, h2 + p, h3 + p, h4 + p,
+h1 + ul, h2 + ul, h3 + ul,
+h1 + ol, h2 + ol, h3 + ol {
+  margin-top: 0;
+}
+
+/* ---------- Links ---------- */
+a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(37, 99, 235, 0.3);
+  word-break: break-word;
+  padding-bottom: 0.5px;
+}
+a:hover { border-bottom-color: var(--accent); }
+
+/* ---------- Inline code ---------- */
+code {
+  font-family: "JetBrains Mono", "IBM Plex Mono", "Ubuntu Mono", "Consolas", ui-monospace, monospace;
+  font-size: 0.87em;
+  background: var(--inline-bg);
+  color: var(--inline-ink);
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid var(--inline-border);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ---------- Code blocks ---------- */
+pre {
+  font-family: "JetBrains Mono", "IBM Plex Mono", "Ubuntu Mono", Consolas, ui-monospace, monospace;
+  background: var(--code-bg);
+  color: var(--code-ink);
+  padding: 11px 14px;
+  border-radius: 6px;
+  border-left: 3px solid var(--accent);
+  font-size: 8.6pt;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0.55em 0 0.75em;
+  page-break-inside: avoid;
+  break-inside: avoid;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+pre code {
+  background: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: inherit;
+  white-space: inherit;
+  font-weight: 400;
+}
+
+/* Pandoc syntax highlighting */
+pre .co, pre .com { color: var(--code-comment); font-style: italic; }
+pre .kw           { color: #c792ea; font-weight: 500; }
+pre .st, pre .ch  { color: #c3e88d; }
+pre .dv, pre .fl  { color: #f78c6c; }
+pre .fu           { color: #82aaff; }
+pre .va           { color: #ffcb6b; }
+pre .op           { color: #89ddff; }
+
+/* ---------- Blockquotes / callouts ---------- */
+blockquote {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  padding: 0.55em 0.9em;
+  margin: 0.6em 0;
+  color: var(--ink-soft);
+  border-radius: 0 4px 4px 0;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child  { margin-bottom: 0; }
+
+blockquote.note    { border-color: #d97706; background: #fffaf0; }
+blockquote.warning { border-color: #dc2626; background: #fef2f2; }
+blockquote.tip     { border-color: #16a34a; background: #f0fdf4; }
+blockquote.important { border-color: #8b5cf6; background: #f5f3ff; }
+blockquote.caution   { border-color: #ea580c; background: #fff7ed; }
+
+/* ---------- Tables ---------- */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 9.3pt;
+  margin: 0.55em 0 0.8em;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+caption {
+  caption-side: bottom;
+  font-size: 8.5pt;
+  color: var(--muted);
+  margin-top: 0.3em;
+  font-style: italic;
+}
+th, td {
+  border-bottom: 1px solid var(--rule);
+  padding: 6px 10px;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.4;
+}
+th {
+  background: transparent;
+  border-bottom: 2px solid var(--ink);
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 8.8pt;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+tr:nth-child(even) td { background: var(--rule-soft); }
+tr:last-child td { border-bottom: 1px solid var(--ink); }
+
+/* ---------- Images ---------- */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0.7em auto;
+  border-radius: 4px;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+figure {
+  text-align: center;
+  margin: 0.8em 0;
+}
+figure figcaption {
+  font-size: 8.8pt;
+  color: var(--muted);
+  margin-top: 0.3em;
+  font-style: italic;
+}
+
+/* ---------- Misc ---------- */
+hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 1.1em 0;
+}
+
+kbd {
+  font-family: "JetBrains Mono", "Ubuntu Mono", Consolas, monospace;
+  font-size: 0.82em;
+  background: linear-gradient(180deg, #ffffff, #f3f4f6);
+  border: 1px solid #d1d5db;
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 1px 6px;
+  color: var(--ink);
+  font-weight: 500;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+}
+
+/* ---------- Print refinements ---------- */
+@media print {
+  pre, blockquote, table, img, figure {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  h2, h3 { page-break-after: avoid; }
+}
